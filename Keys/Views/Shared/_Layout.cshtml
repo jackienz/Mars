@@ -4,7 +4,7 @@
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>@ViewBag.Title - 我的 ASP.NET 应用程序</title>
+    <title>@ViewBag.Title - My Mars</title>
     @Styles.Render("~/Content/css")
     @Styles.Render("~/Content/semantic")
     @Scripts.Render("~/bundles/modernizr")
@@ -19,13 +19,13 @@
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                 </button>
-                @Html.ActionLink("Keys-Onboarding", "Index", "Home", new { area = "" }, new { @class = "navbar-brand" })
+                @Html.ActionLink("Keys-Onboarding", "Index", "Customers", new { area = "" }, new { @class = "navbar-brand" })
             </div>
             <div class="navbar-collapse collapse">
                 <ul class="nav navbar-nav">
-                    <li>@Html.ActionLink("Prodcuts", "Index", "Customers")</li>
+                    <li>@Html.ActionLink("Prodcuts", "Index", "Products")</li>
                     <li>@Html.ActionLink("Customers", "Index", "Customers")</li>
-                    <li>@Html.ActionLink("Store", "Index", "Sales")</li>
+                    <li>@Html.ActionLink("Store", "Index", "Store")</li>
                     <li>@Html.ActionLink("Sales", "Index", "Sales")</li>
                 </ul>
             </div>

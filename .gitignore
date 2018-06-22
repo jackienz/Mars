@@ -259,3 +259,5 @@ paket-files/
 # Python Tools for Visual Studio (PTVS)
 __pycache__/
 *.pyc
+/Keys/Scripts/paginathing.js
+/Keys/Scripts/jquery-1.11.1.js

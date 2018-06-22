@@ -13,8 +13,8 @@ namespace Keys.Controllers
 {
     public class CustomersController : Controller
     {
-        private MarsDBEntities db = new MarsDBEntities();
-
+        // private MarsDBEntities db = new MarsDBEntities();
+        private hilandDBEntities db = new hilandDBEntities();
         // GET: Customers
         public ActionResult Index()
         {

@@ -1,0 +1,218 @@
+﻿
+@model IEnumerable<Keys.Models.Product>
+
+@{
+    ViewBag.Title = "Index";
+}
+<br />
+<br />
+<h3>Products Details</h3>
+
+<p>
+
+    <a href="#" class="ui blue button" onclick="AddNewProduct()">Add New Products</a>
+</p>
+<table class="ui definition  table" id="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Name)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Price)
+            </th>
+            <th>Action(Edit)</th>
+            <th>Action(Delete)</th>
+        </tr>
+    </thead>
+    <tbody id="setData">
+        <tr><td colspan="4" class="text-center"><img src="~/Content/Images/onloading.gif" id="load" style="display:none" /></td> </tr>
+    </tbody>
+
+</table>
+
+
+
+
+@*Create A popup modal*@
+<div class="ui modal" id="MyModal" style="height:415px;width:60%;">
+    <div class="header text-center">
+        Products Detail
+    </div>
+    <h4 class="text-info" id="title"></h4>
+    <div class="content">
+        <form id="form">
+            <div class="form-group" id="customerId">
+                <label for="Id">Prducts ID</label>
+                <input type="text" id="Id" name="Id" readonly class="form-control" />
+            </div>
+
+            <div class="form-group">
+                <label for="name">Name</label>
+                <input type="text" id="name" name="name" placeholder="Please input the customer name" class="form-control" />
+            </div>
+            <div class="form-group">
+                <label for="address">Price</label>
+                <input type="text" id="price" name="price" placeholder="please input the customer address" class="form-control" onchange="isNum()" /><p id="isnum" class="text-danger" style="display:none;padding-top:5px;"> * Price must be integer</p>
+            </div>
+
+
+            <div class="action text-right">
+                <div class="two fluid ui inverted buttons">
+                    <a href="#" class="ui approve green button" id="SaveRecord">Save</a>
+                    <a href="#" class="ui cancel red inverted button" id="cancel" onclick="SaveCancel()">Cancel</a>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+@*Delete modal*@
+<div class="ui modal" id="DeleteConfirm" style="height:270px;width:60%;">
+    <div class="header">
+        <h2 class="text-primary text-center">Delete Products Record</h2>
+    </div>
+    <h4 class="text-info">Are you sure delete this record?</h4>
+    <div class="content">
+        <div class="action text-right">
+            <div class="two fluid ui inverted buttons">
+                <a href="#" class="ui approve green button" id="confirmDelete" onclick="ConfirmDelete()">Confirm</a>
+                <a href="#" class="ui cancel red inverted button" id="cancel" onclick="DeleteCancel()">Cancel</a>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+
+
+@section scripts{
+    <script>
+        // $(document).ready(function () {
+        $("#load").show();
+        $.get("/Products/GetAllProducts", null, function (data) {
+            var setData = $("#setData").empty();
+
+            for (var i = 0; i < data.length; i++) {
+                var DataList = "<tr>" +
+                    "<td>" + data[i].Name + "</td>" +
+                    "<td>" + data[i].Price + "</td>" +
+                    "<td><a href='#' class='ui orange  button' onclick='Edit(" + data[i].Id + ")'><i class='edit icon'></i>Edit</a>" + "</td>" +
+                    "<td><a href='#' class='ui red button' onclick='Delete(" + data[i].Id + ")'><i class='trash outline icon'></i>Delete</a>" + "</td>"
+                    + "</tr>";
+
+
+                $("#load").hide();
+                setData.append(DataList);
+            }
+        });
+
+        function AddNewProduct() {
+            $("#MyModal").modal("show");
+            $("#title").html("Add a new product detail.")
+            $("#customerId").hide();
+            if ($("#Id").val() > 0) {
+                $("#MyModal input").val("");
+            }
+        }
+
+        function SaveCancel() {
+            $("#MyModal").modal("hide")
+        }
+        function DeleteCancel() {
+            $("#DeleteConfirm").modal("hide")
+        }
+
+
+        function isNum() {
+            var price = $("#price").val();
+            if (isNaN(price)) {
+                $("#isnum").show();
+            }
+            else {
+                $("#isnum").hide();
+            }
+
+        }
+
+        function Validation() {
+
+            if ($("#name").val().length == 0 || $("#price").val.length == 0) {
+                alert("Please input the product name and price!")
+                return false;
+            }
+            else {
+                return true;
+            }
+        }
+
+
+        $("#SaveRecord").click(function () {
+            if (Validation()) {
+                var data = $("#form").serialize();
+                var url = "";
+                if ($("#Id").val() > 0) {
+                    url = "/Products/UpdateProducts";
+                }
+                else {
+                    url = "/Products/AddProduct"
+                }
+                $.ajax({
+                    type: "POST",
+                    url: url,
+                    data: data,
+                    success: function (result) {
+                        alert("Add Success...");
+                        window.location = "/Products/index";
+                        $("#MyModal").hide();
+                    },
+                    error: function (error) {
+                        alert(error);
+                    }
+                });
+            }
+            else {
+                return;
+            }
+        })
+
+        function Delete(Id) {
+            $("#Id").val(Id);
+            $("#DeleteConfirm").modal("show");
+
+        }
+        function ConfirmDelete() {
+            var CusId = $("#Id").val();
+            $.ajax({
+                type: "GET",
+                url: "/Products/DeleteProduct?id=" + CusId,
+                success: function (result) {
+                    alert("Delete Product Success.");
+                    $("#DeleteConfirm").modal("hide");
+                    window.location = "/Products/index";
+                },
+            })
+        }
+
+
+        function Edit(cusId) {
+            var url = "/Products/GetProductsById?Id=" + cusId;
+            $("#title").html("Update products record");
+            $("#MyModal").modal("show");
+            $.ajax({
+                type: "GET",
+                url: url,
+                success: function (data) {
+                    $("#Id").val(data.Id);
+                    $("#name").val(data.Name);
+                    $("#price").val(data.Price);
+                },
+
+            });
+        }
+
+
+    </script>
+}
+
+

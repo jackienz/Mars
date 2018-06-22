@@ -12,7 +12,9 @@ namespace Keys.Controllers
 {
     public class SalesController : Controller
     {
-        private MarsDBEntities db = new MarsDBEntities();
+        // private MarsDBEntities db = new MarsDBEntities();
+        private hilandDBEntities db = new hilandDBEntities();
+
 
         // GET: Sales
         public ActionResult Index()
@@ -52,6 +54,7 @@ namespace Keys.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Create([Bind(Include = "Id,ProductId,CustomerId,StoreId,DateSold")] ProductSold productSold)
         {
+            productSold.DateSold = DateTime.Now;
             if (ModelState.IsValid)
             {
                 db.ProductSold.Add(productSold);
